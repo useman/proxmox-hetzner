@@ -148,8 +148,8 @@ make_answer_toml() {
 
 [disk-setup]
     filesystem = "zfs"
-    zfs.raid = "raid1"
-    disk_list = ["/dev/vda", "/dev/vdb"]
+    zfs.raid = "raid10"
+    disk_list = ["/dev/vda", "/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde", "/dev/vdf", "/dev/vdg", "/dev/vdh"]
 
 EOF
     echo -e "${CLR_GREEN}answer.toml created.${CLR_RESET}"
@@ -185,7 +185,14 @@ install_proxmox() {
         -cpu host -smp 4 -m 4096 \
         -boot d -cdrom ./pve-autoinstall.iso \
         -drive file=/dev/nvme0n1,format=raw,media=disk,if=virtio \
-        -drive file=/dev/nvme1n1,format=raw,media=disk,if=virtio -no-reboot -display none > /dev/null 2>&1
+        -drive file=/dev/nvme1n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme2n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme3n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme4n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme5n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme6n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme7n1,format=raw,media=disk,if=virtio \
+        -no-reboot -display none > /dev/null 2>&1
 }
 
 # Function to boot the installed Proxmox via QEMU with port forwarding
@@ -206,8 +213,14 @@ boot_proxmox_with_port_forwarding() {
         -netdev user,id=net0,hostfwd=tcp::5555-:22 \
         -smp 4 -m 4096 \
         -drive file=/dev/nvme0n1,format=raw,media=disk,if=virtio \
-        -drive file=/dev/nvme1n1,format=raw,media=disk,if=virtio -display none \
-        > qemu_output.log 2>&1 &
+        -drive file=/dev/nvme1n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme2n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme3n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme4n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme5n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme6n1,format=raw,media=disk,if=virtio \
+        -drive file=/dev/nvme7n1,format=raw,media=disk,if=virtio \
+        -display none > qemu_output.log 2>&1 &
     
     QEMU_PID=$!
     echo -e "${CLR_YELLOW}QEMU started with PID: $QEMU_PID${CLR_RESET}"
