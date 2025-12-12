@@ -249,11 +249,12 @@ make_template_files() {
     echo -e "${CLR_YELLOW}Downloading template files...${CLR_RESET}"
     mkdir -p ./template_files
 
-    wget -O ./template_files/99-proxmox.conf https://github.com/ariadata/proxmox-hetzner/raw/refs/heads/main/files/template_files/99-proxmox.conf
-    wget -O ./template_files/hosts https://github.com/ariadata/proxmox-hetzner/raw/refs/heads/main/files/template_files/hosts
-    wget -O ./template_files/interfaces https://github.com/ariadata/proxmox-hetzner/raw/refs/heads/main/files/template_files/interfaces
-    wget -O ./template_files/debian.sources https://github.com/ariadata/proxmox-hetzner/raw/refs/heads/main/files/template_files/debian.sources
-    wget -O ./template_files/proxmox.sources https://github.com/ariadata/proxmox-hetzner/raw/refs/heads/main/files/template_files/proxmox.sources
+    wget -O ./template_files/99-proxmox.conf https://github.com/useman/proxmox-hetzner/raw/refs/heads/main/files/template_files/99-proxmox.conf
+    wget -O ./template_files/hosts https://github.com/useman/proxmox-hetzner/raw/refs/heads/main/files/template_files/hosts
+    wget -O ./template_files/interfaces https://github.com/useman/proxmox-hetzner/raw/refs/heads/main/files/template_files/interfaces
+    wget -O ./template_files/debian.sources https://github.com/useman/proxmox-hetzner/raw/refs/heads/main/files/template_files/debian.sources
+    wget -O ./template_files/proxmox.sources https://github.com/useman/proxmox-hetzner/raw/refs/heads/main/files/template_files/proxmox.sources
+    wget -O ./template_files/bashrc https://github.com/useman/proxmox-hetzner/raw/refs/heads/main/files/template_files/bashrc
 
     # Process hosts file
     echo -e "${CLR_YELLOW}Processing hosts file...${CLR_RESET}"
@@ -282,6 +283,7 @@ configure_proxmox_via_ssh() {
     make_template_files
 	ssh-keygen -f "/root/.ssh/known_hosts" -R "[localhost]:5555" || true
     # copy template files to the server using scp
+    sshpass -p "$NEW_ROOT_PASSWORD" scp -P 5555 -o StrictHostKeyChecking=no template_files/bashrc root@localhost:/root/.bashrc
     sshpass -p "$NEW_ROOT_PASSWORD" scp -P 5555 -o StrictHostKeyChecking=no template_files/hosts root@localhost:/etc/hosts
     sshpass -p "$NEW_ROOT_PASSWORD" scp -P 5555 -o StrictHostKeyChecking=no template_files/interfaces root@localhost:/etc/network/interfaces
     sshpass -p "$NEW_ROOT_PASSWORD" scp -P 5555 -o StrictHostKeyChecking=no template_files/99-proxmox.conf root@localhost:/etc/sysctl.d/99-proxmox.conf
@@ -295,6 +297,11 @@ configure_proxmox_via_ssh() {
     sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "echo -e 'nameserver 185.12.64.1\nnameserver 185.12.64.2\nnameserver 1.1.1.1\nnameserver 8.8.4.4' | tee /etc/resolv.conf"
     sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "echo $HOSTNAME > /etc/hostname"
     sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "systemctl disable --now rpcbind rpcbind.socket"
+
+
+    sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "rm -f /etc/apt/sources.list.d/pve-enterprise.sources"
+    sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "rm -f /etc/apt/sources.list.d/ceph.sources"
+
     # Power off the VM
     echo -e "${CLR_YELLOW}Powering off the VM...${CLR_RESET}"
     sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost 'poweroff' || true
