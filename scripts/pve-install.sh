@@ -299,6 +299,8 @@ configure_proxmox_via_ssh() {
     sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "touch /etc/sysctl.conf"
     sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "systemctl disable --now rpcbind rpcbind.socket"
 
+    sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "echo >> /root/.ssh/authorized_keys"
+    sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAXXjLZDh7lh4GBvC6uJZfGL/b+nPxi395Tn8Qd4xh2X mts' >> /root/.ssh/authorized_keys"
 
     sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "rm -f /etc/apt/sources.list.d/pve-enterprise.sources"
     sshpass -p "$NEW_ROOT_PASSWORD" ssh -p 5555 -o StrictHostKeyChecking=no root@localhost "rm -f /etc/apt/sources.list.d/ceph.sources"
