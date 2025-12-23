@@ -14,8 +14,6 @@ source /etc/network/interfaces.d/*
 auto lo
 iface lo inet loopback
 
-iface lo inet6 loopback
-
 iface {{INTERFACE_NAME}} inet manual
 
 auto vmbr0
