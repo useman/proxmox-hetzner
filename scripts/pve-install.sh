@@ -64,10 +64,10 @@ get_system_inputs() {
     echo "IPv6: $MAIN_IPV6"
     
     # Get user input for other configuration
-    read -e -p "Enter your hostname : " -i "proxmox-example" HOSTNAME
-    read -e -p "Enter your FQDN name : " -i "proxmox.example.com" FQDN
-    read -e -p "Enter your timezone : " -i "Europe/Istanbul" TIMEZONE
-    read -e -p "Enter your email address: " -i "admin@example.com" EMAIL
+    read -e -p "Enter your hostname : " -i "pve" HOSTNAME
+    read -e -p "Enter your FQDN name .local: " -i "pve" FQDN
+    read -e -p "Enter your timezone : " -i "UTC" TIMEZONE
+    read -e -p "Enter your email address: " -i "root@localhost" EMAIL
     read -e -p "Enter your private subnet : " -i "192.168.26.0/24" PRIVATE_SUBNET
     read -e -p "Enter your System New root password: " NEW_ROOT_PASSWORD
     
